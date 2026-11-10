@@ -1,0 +1,15 @@
+{
+  "term": "2271",
+  "term_name": "Spring 2027",
+  "stop_after": "2027-01-17",
+  "notify_user": "zab14-a11y",
+  "sections": [
+    {"class_number": "32569", "course": "CEL 200", "when": "MW 10:30-11:45 AM", "instructor": "T. Thomas"},
+    {"class_number": "35658", "course": "CEL 200", "when": "TTh 3:00-4:15 PM",  "instructor": "T. Thomas"},
+    {"class_number": "28835", "course": "COM 259", "when": "TTh 1:30-2:45 PM",  "instructor": "P. McDonald"},
+    {"class_number": "30449", "course": "COM 259", "when": "TTh 12:00-1:15 PM", "instructor": "P. McDonald"},
+    {"class_number": "37432", "course": "COM 259", "when": "MW 1:30-2:45 PM",   "instructor": "N. Steinmetz"},
+    {"class_number": "37433", "course": "COM 259", "when": "MW 3:00-4:15 PM",   "instructor": "M. Stephenson"},
+    {"class_number": "37435", "course": "COM 259", "when": "TTh 1:30-2:45 PM",  "instructor": "R. Duren"}
+  ]
+}
