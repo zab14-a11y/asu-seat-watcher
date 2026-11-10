@@ -12,6 +12,7 @@ It never logs into My ASU and never enrolls you. It only reads public data.
 import json
 import os
 import sys
+import time
 import urllib.parse
 import urllib.request
 from datetime import datetime, timedelta, timezone
@@ -96,6 +97,26 @@ class GitHub:
 
 
 def main():
+    """Check repeatedly for LOOP_MINUTES (default: one check), every INTERVAL_MINUTES.
+
+    GitHub's scheduler often starts runs late or skips them, so each run keeps
+    checking on its own for most of an hour instead of relying on the timer.
+    """
+    loop_minutes = float(os.environ.get("LOOP_MINUTES", "0"))
+    interval = float(os.environ.get("INTERVAL_MINUTES", "5")) * 60
+    deadline = time.monotonic() + loop_minutes * 60
+    while True:
+        try:
+            run_once()
+        except Exception as e:  # one bad check shouldn't end the run
+            print(f"Check failed, will retry: {e!r}", file=sys.stderr)
+        if time.monotonic() + interval > deadline:
+            break
+        sys.stdout.flush()
+        time.sleep(interval)
+
+
+def run_once():
     with open(os.path.join(os.path.dirname(__file__), "classes.json")) as f:
         cfg = json.load(f)
 
@@ -110,6 +131,7 @@ def main():
 
     seats = check_seats(cfg)
     by_nbr = {s["class_number"]: s for s in cfg["sections"]}
+    print(f"--- {stamp} ---")
     for nbr, s in by_nbr.items():
         status = f"{seats[nbr]} open" if nbr in seats else "NOT FOUND"
         print(f"{s['course']} #{nbr} ({s['when']}, {s['instructor']}): {status}")
