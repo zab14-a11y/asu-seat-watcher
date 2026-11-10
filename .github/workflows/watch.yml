@@ -2,7 +2,9 @@ name: Check ASU seats
 
 on:
   schedule:
-    - cron: "*/10 * * * *"   # every 10 minutes (GitHub sometimes runs a few minutes late)
+    # Each run keeps checking every 5 minutes for ~50 minutes. Two start times
+    # an hour (off the busy :00 mark) so a late or skipped GitHub run is covered.
+    - cron: "7,37 * * * *"
   workflow_dispatch:          # lets you run it by hand from the Actions tab
 
 permissions:
@@ -11,12 +13,12 @@ permissions:
 
 concurrency:
   group: seat-watcher
-  cancel-in-progress: false
+  cancel-in-progress: false   # a new run waits for the current one to finish
 
 jobs:
   check:
     runs-on: ubuntu-latest
-    timeout-minutes: 5
+    timeout-minutes: 60
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -25,4 +27,6 @@ jobs:
       - name: Check seats
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: python watch.py
+          LOOP_MINUTES: "50"
+          INTERVAL_MINUTES: "5"
+        run: python -u watch.py
