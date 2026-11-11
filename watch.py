@@ -150,13 +150,20 @@ def run_once():
     for nbr, n_open in seats.items():
         s = by_nbr[nbr]
         if n_open > 0 and nbr not in alerts:
+            current = cfg.get("enrolled", {}).get(s["course"])
+            if current:
+                how = (f"You're already in {s['course']} #{current}, so use **Swap**, not Enroll:\n"
+                       f"1. Go to https://my.asu.edu, open registration, and choose Swap.\n"
+                       f"2. Swap #{current} for #{nbr}. You keep #{current} unless the swap succeeds.\n\n")
+            else:
+                how = (f"1. Go to https://my.asu.edu and open your shopping cart.\n"
+                       f"2. Check only #{nbr} and enroll.\n\n")
             gh.create(
                 f"OPEN SEAT: {s['course']} #{nbr} ({s['when']}, {s['instructor']})",
                 f"@{cfg['notify_user']} {n_open} seat(s) just opened in **{s['course']}**, "
                 f"class #{nbr}, {s['when']} with {s['instructor']} ({cfg['term_name']}).\n\n"
-                f"Spotted {stamp} (Phoenix time). Enroll fast:\n"
-                f"1. Go to https://my.asu.edu and open your shopping cart.\n"
-                f"2. Check only #{nbr} and enroll.\n\n"
+                f"Spotted {stamp} (Phoenix time). Act fast:\n"
+                + how +
                 f"Or message Claude \"enroll me in #{nbr}\" and it will do it in the browser pane.\n\n"
                 f"Once you're in, remove the other {s['course']} sections from classes.json "
                 f"so you stop getting alerts for them.",
